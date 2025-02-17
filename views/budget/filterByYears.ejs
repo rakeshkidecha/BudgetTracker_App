@@ -111,18 +111,20 @@
 <script src="/js/jquery.min.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('incomeChart');
     let incomeChart ;
     function destroyChart(){
         if(incomeChart){
+            console.log('destroy')
             incomeChart.destroy();
         }
     }
+
     function setChartType(ctx,chartType,label,value){
         console.log("set chart");
         destroyChart();
         setChart(ctx,chartType,label,value);
     }
+
     function setChart (ctx,chartType,label,value){
         incomeChart = new Chart(ctx, {
             type: chartType,
@@ -146,6 +148,7 @@
 
     function selectedMonthIncome (month){
         let ihtm = '';
+        document.querySelector('#expenseChartBtn').innerHTML = ''
         const ctx = document.getElementById('incomeChart');
         destroyChart();
         $.ajax({
@@ -185,14 +188,14 @@
             document.querySelector('#doughnut').addEventListener('click',()=>{
                 setChartType(ctx,'doughnut',labels,value);
             });
-
         })
     }
 
     function selectedMonthExpense(month){
         let ihtm = '';
-        destroyChart();
+        document.querySelector('#chartBtn').innerHTML = ''
         const ctx = document.getElementById('expenseChart');
+        destroyChart();
         $.ajax({
             type: 'GET',
             url: `/budget/selectedMonthExpense/<%= year %>/${month}`,
@@ -219,8 +222,11 @@
                 <button class="btn mx-2 text-white" id='bar'>Bar</button>
                 <button class="btn mx-2 text-white" id='doughnut'>Doughnut</button>
             `;
+            
+            document.querySelector('#showExpense').innerHTML = ihtm;
 
             document.querySelector('#pie').addEventListener('click',()=>{
+                console.log("pie")
                 setChartType(ctx,'pie',labels,value);
             });
             document.querySelector('#bar').addEventListener('click',()=>{
@@ -230,8 +236,7 @@
                 setChartType(ctx,'doughnut',labels,value);
             });
 
-            document.querySelector('#showExpense').innerHTML = ihtm;
-        })
+        });
     }
 </script>
 

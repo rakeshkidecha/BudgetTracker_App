@@ -16,18 +16,33 @@
             <h3>Get Starting</h3>
             <p>Sign Up for Starting!</p>
         </div>
-        <form method="post" action="/signUpUser">
+        <form method="post" action="/signUpUser" enctype="multipart/form-data">
             <label class="text-body-secondary mb-2 mb-1" for="username">Username:</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Enter Username"/>
+            <input type="text" name="username" id="username" value="<%= oldValue && oldValue.username %>"  class="form-control" placeholder="Enter Username"/>
+            <% if(errors && errors.username) {%>
+                <p class="text-danger"><%= errors.username.msg %></p>
+            <% } %> 
 
             <label class="text-body-secondary mb-2 mt-3 mb-1" for="email">Email:</label>
-            <input type="text" name="email" id="email" class="form-control" placeholder="Enter Email"/>
+            <input type="text" name="email" id="email" value="<%= oldValue && oldValue.email %>"  class="form-control" placeholder="Enter Email"/>
+            <% if(errors && errors.email) {%>
+                <p class="text-danger"><%= errors.email.msg %></p>
+            <% } %> 
             
             <label class="text-body-secondary mb-2 mt-3 mb-1" for="password">Password:</label>
-            <input type="text" name="password" id="password" class="form-control" placeholder="Enter Password"/>
+            <input type="text" name="password" id="password" value="<%= oldValue && oldValue.password %>"  class="form-control" placeholder="Enter Password"/>
+            <% if(errors && errors.password) {%>
+                <p class="text-danger"><%= errors.password.msg %></p>
+            <% } %> 
 
             <label class="text-body-secondary mb-2 mt-3 mb-1" for="confirmPassword">Confirm Password:</label>
-            <input type="text" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Enter Confirm Password"/>
+            <input type="text" name="confirmPassword" id="confirmPassword" value="<%= oldValue && oldValue.confirmPassword %>"  class="form-control" placeholder="Enter Confirm Password"/>
+            <% if(errors && errors.confirmPassword) {%>
+                <p class="text-danger"><%= errors.confirmPassword.msg %></p>
+            <% } %> 
+
+            <label class="text-body-secondary mb-2 mt-3 mb-1" for="profileImage">Confirm Password:</label>
+            <input type="file" name="profileImage" id="profileImage" class="form-control" placeholder="Enter Confirm Password"/>
 
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary">Sign Up</button>

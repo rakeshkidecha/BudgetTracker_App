@@ -1,7 +1,9 @@
 const User = require('../models/UserModel');
 const Crypter = require('cryptr');
+const { validationResult } = require('express-validator');
 const cryptr =new Crypter("secretkeybhgdjfgdsjfk");
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
 
 module.exports.login = async (req,res)=>{
     try {
@@ -26,7 +28,7 @@ module.exports.loginUser = async (req,res)=>{
         }
 
         const user = await User.findOne({email:req.body.email});
-        if(user.password === req.body.password){
+        if(await bcrypt.compare(req.body.password,user.password)){
             res.cookie('user',cryptr.encrypt(JSON.stringify(user)));
             return res.redirect('/budget');
         }else{
@@ -46,7 +48,10 @@ module.exports.signUp = async (req,res)=>{
             return res.redirect('/budget');
         }
 
-        return res.render('auth/signUp');
+        return res.render('auth/signUp',{
+            errors:null,
+            oldValue:null
+        });
     } catch (err) {
         console.log("Something Wrong",err);
         return res.redirect('back');
@@ -55,16 +60,20 @@ module.exports.signUp = async (req,res)=>{
 
 module.exports.signUpUser = async (req,res)=>{
     try {
-        const isExistEmail = await User.find({email:req.body.email}).countDocuments();
-        if(isExistEmail != 0){
-            console.log("This Email is Already used please try another one..");
-            return res.redirect('back');
+
+        const result = validationResult(req);
+        if(!result.isEmpty()){
+            return res.render('auth/signUp',{
+                errors:result.mapped(),
+                oldValue:req.body
+            });
+        };
+
+        if(req.file){
+            req.body.profileImage = User.imgPath+'/'+req.file.filename;
         }
-        
-        if(req.body.password != req.body.confirmPassword){
-            console.log("password and confirm password not match..");
-            return res.redirect('back');
-        }
+
+        req.body.password = await bcrypt.hash(req.body.password,10);
 
         const createdUser = await User.create(req.body);
 
@@ -74,12 +83,12 @@ module.exports.signUpUser = async (req,res)=>{
             return res.redirect('/budget');
         }else{
             console.log("faild to create user");
-            return res.redirect('back');
+            return res.redirect('/signUp');
         }
         
     } catch (err) {
         console.log("Something Wrong",err);
-        return res.redirect('back');
+        return res.redirect('/signUp');
     }
 }
 
@@ -239,6 +248,63 @@ module.exports.setNewPassword = async(req,res)=>{
             return res.redirect('/');
         }else{
             console.log("Faild to forget password");
+            return res.redirect('back');
+        }
+
+    } catch (err) {
+        console.log("Something Wrong",err);
+        return res.redirect('back');
+    }
+};
+
+
+module.exports.changePassword = async(req,res)=>{
+    try {
+        if(!req.cookies.user){
+            console.log("Plaese login first..");
+            return res.redirect('/');
+        }
+        const loginUser = JSON.parse(cryptr.decrypt(req.cookies.user));
+
+        return res.render('auth/changePassword',{loginUser});
+
+    } catch (err) {
+        console.log("Something Wrong",err);
+        return res.redirect('back');
+    }
+};
+
+module.exports.checkPassword = async(req,res)=>{
+    try {
+        const isExistUser = await User.findById(req.body.id);
+        if(!isExistUser){
+            console.log("User not exist");
+            return res.redirect('back');
+        }
+
+        if(!await bcrypt.compare(req.body.oldPassword,isExistUser.password)){
+            console.log("Old Password not match");
+            return res.redirect('back');
+        }
+
+        if(req.body.oldPassword == req.body.newPassword){
+            console.log("Old and New Password are Same");
+            return res.redirect('back');
+        }
+
+        if(req.body.newPassword == req.body.confirmPassword){
+            const newPass = await bcrypt.hash(req.body.newPassword,10);
+            const updatePass = await User.findByIdAndUpdate(isExistUser._id,{password:newPass});
+            if(updatePass){
+                console.log("Password Updated");
+                res.clearCookie('user');
+                return res.redirect('/');
+            }else{
+                console.log("Failed to Update password");
+                return res.redirect('back');
+            }
+        }else{
+            console.log("New and Confirm Password are Not Match");
             return res.redirect('back');
         }
 

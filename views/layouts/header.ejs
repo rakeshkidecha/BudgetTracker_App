@@ -25,10 +25,12 @@
         </div>
         <div>
             <div class="dropdown">
-                <p class="m-0 text-white" style="cursor: pointer;" data-bs-toggle="dropdown" ><%= loginUser.username %></p>
+                <p class="m-0 text-white" style="cursor: pointer;" data-bs-toggle="dropdown" >
+                    <img src="<%= loginUser.profileImage %>" alt="profileImage" title="profileImage" width="40px" style="height: 40px;object-fit: contain;" class="img-fuild rounded-circle"/>
+                </p>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user me-2"></i><%= loginUser.username %></a></li>
-                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-lock me-2"></i>Change Password</a></li>
+                  <li><a class="dropdown-item" href="/changePassword"><i class="fa-solid fa-lock me-2"></i>Change Password</a></li>
                   <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-right-from-bracket me-2"></i> LogOut</a></li>
                 </ul>
             </div>
