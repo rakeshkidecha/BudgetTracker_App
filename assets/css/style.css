@@ -1,0 +1,79 @@
+header{
+    background-color: #1A4F7A;
+    padding: 10px;
+    position: fixed;
+}
+.logo{
+    width: 200px;
+}
+
+aside{
+    width: 200px;
+    background-color: #c2c2c22e;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    bottom: 0;
+    overflow-y: scroll;
+    height: 100vh;
+}
+
+
+main{
+    width: calc(100% - 200px);
+    margin-left: auto;
+    padding: 20px;
+    padding-top: 76px ;
+}
+
+
+footer{
+    width: calc(100% - 200px);
+    margin-left: auto;
+    background-color: #1a1919;
+    color: white;
+}
+
+
+body{
+    background-color: #F8F9FD;
+}
+form{
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 0px 11px -3px;
+}
+form .form-control{
+    background-color:#F2F6F7 !important;
+    padding: 10px 20px;
+    border: none;
+}
+form .form-control:focus{
+    box-shadow: none !important;
+    border: none !important;
+}
+form .form-control::placeholder{
+    color: #c2c2c2;
+}
+.budgetTracker form label{
+    font-size: 14px;
+}
+.budgetTracker form .form-control{
+    padding: 5px 10px;
+    font-size: 14px;
+}
+.budgetTracker form .btn{
+    background-color: #1A4F7A;
+}
+.chartBtn .btn , .open-form-modal{
+    font-size: 14px;
+    background-color: #1A4F7A;
+}
+.open-form-modal:hover{
+    background-color: #113858;
+}
+.showResendOtp{
+    pointer-events: all !important;
+    opacity: 100% !important;
+}

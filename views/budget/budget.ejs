@@ -1,0 +1,353 @@
+<%- include('../layouts/header') %>
+    
+   <main>
+        <div class="budgetTracker">
+            <!-- forms / -->
+            <div class="text-center">
+            <!-- add income form  -->
+               <!-- Button trigger add income modal -->
+               <button type="button" class="btn open-form-modal mx-2 text-white" data-bs-toggle="modal" data-bs-target="#addIncomeForm">
+                  Add Income <i class="fa-solid fa-plus"></i>
+               </button>
+               
+               <!-- add income Modal -->
+               <div class="modal fade text-start" id="addIncomeForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Income</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form method="post" action="/budget/addIncome">
+                           <label class="mb-2 mt-3">Income</label>
+                           <input type="number" name="income" placeholder="Enter Your Monthly Income" class="form-control" />
+   
+                           <label class="mb-2 mt-3">Source</label>
+                           <input type="text" name="source" placeholder="Enter Income Source" class="form-control" />
+   
+                           <label class="mb-2 mt-3">Date</label>
+                           <input type="date" name="date" class="form-control" />
+                           
+                           <button type="submit" class="btn w-100 mt-4 text-white">Add</button>
+                        </form>
+                     </div>
+                  </div>
+                  </div>
+               </div>
+            <!-- end add income form  -->
+
+            <!-- add expense modal  -->
+               <!-- Button trigger modal -->
+               <button type="button" class="btn open-form-modal mx-2 text-white" data-bs-toggle="modal" data-bs-target="#addExpenseForm">
+                  Add Expense <i class="fa-solid fa-plus"></i>
+               </button>
+               
+               <!-- Modal -->
+               <div class="modal fade text-start" id="addExpenseForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Expense</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form method="post" action="/budget/addExpense">
+      
+                           <label class="mb-2 mt-3">Expense Title</label>
+                           <input type="text" name="title" placeholder="Enter title" class="form-control" />
+      
+                           <label class="mb-2 mt-3">Price</label>
+                           <input type="number" name="price" placeholder="Enter Price" class="form-control" />
+      
+                           <label class="mb-2 mt-3">Date</label>
+                           <input type="date" name="date" class="form-control" />
+   
+                           <button type="submit" class="btn w-100 mt-4 text-white">Add</button>
+                        </form>
+                     </div>
+                  </div>
+                  </div>
+               </div>
+            <!--end add expense modal  -->
+            </div>   
+
+            <!-- end form ------------ -->
+             <!-- view budget  -->
+            <div>
+               <div class="d-flex justify-content-between my-5">
+                  <% const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+                  %>
+
+                  <h5><%= months[ allIncome[0] ? new Date(allIncome[0].date).getMonth() 
+                  : allExpense[0] ? new Date(allExpense[0].date).getMonth() 
+                  : new Date().getMonth()] %> 
+                  <%= allIncome[0] ? new Date(allIncome[0].date).getFullYear() 
+                  : allExpense[0] ? new Date(allExpense[0].date).getFullYear()  
+                  : new Date().getFullYear() %></h5>
+
+                  <h5>Total Budget:- <%=  totalIncome ? totalIncome :0 %></h5>
+
+                  <h5>Total Expense:- <%= totalExpense %></h5>
+
+                  <h5>Left Budget:- <%=   totalIncome ? totalIncome - totalExpense: 0 -totalExpense %></h5>
+
+               </div>
+               <div class="row g-4 align-items-cneter justify-content-center">
+                  <!-- income details  -->
+                  <div class="col-lg-6">
+                     <h5 class="mb-4">Income Details</h5>
+                     <div class="text-center chartBtn mb-4">
+                        <button class="btn mx-2 text-white" onclick="setIncomeChartType('pie')">Pie</button>
+                        <button class="btn mx-2 text-white" onclick="setIncomeChartType('bar')">Bar</button>
+                        <button class="btn mx-2 text-white" onclick="setIncomeChartType('doughnut')">Doughnut</button>
+                     </div>
+                     <div class="d-flex justify-content-center" style="height: 340px;">
+                        <canvas id="incomeChart"></canvas>
+                      </div>
+                     <table class="table table-striped mt-4">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Source</th>
+                              <th>Income</th>
+                              <th>Date</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <% allIncome.map((item,i)=>{ %>
+                              <tr>
+                                 <td><%= i+1 %></td>
+                                 <td><%= item.source %></td>
+                                 <td>₹ <%= item.income %></td>
+                                 <td><%= item.date %></td>
+                                 <td class="d-flex">
+                                    <a href="javascript:void(0)" onclick="updateIncome(`<%= JSON.stringify( item ) %>`)" data-bs-toggle="modal" data-bs-target="#incomeUpdateModal" class="nav-link mx-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href="/budget/deleteIncome/<%= item.id %>" class="nav-link mx-2"><i class="fa-solid fa-trash"></i></a>
+                                 </td>
+                              </tr>
+                           <% }) %>
+                        </tbody>
+                     </table>
+                  </div>
+
+                  <!-- expense details  -->
+                  <div class="col-lg-6">
+                     <h5 class="mb-4">Expense Details</h5>
+                     <div class="text-center chartBtn mb-4">
+                        <button class="btn mx-2 text-white" onclick="setChartType('pie')">Pie</button>
+                        <button class="btn mx-2 text-white" onclick="setChartType('bar')">Bar</button>
+                        <button class="btn mx-2 text-white" onclick="setChartType('doughnut')">Doughnut</button>
+                     </div>
+                     <div class="d-flex justify-content-center" style="height: 340px;">
+                        <canvas id="myChart"></canvas>
+                     </div>
+                      <table class="table table-striped mt-4">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Title</th>
+                              <th>Price</th>
+                              <th>Date</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <% allExpense.map((item,i)=>{ %>
+                              <tr>
+                                 <td><%= i+1 %></td>
+                                 <td><%= item.title %></td>
+                                 <td>₹ <%= item.price %></td>
+                                 <td><%= item.date %></td>
+                                 <td class="d-flex">
+                                    <a href="" onclick="updateExpense(`<%= JSON.stringify( item ) %>`)" data-bs-toggle="modal" data-bs-target="#expenseUpdateModal" class="nav-link mx-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href="/budget/deleteExpense/<%= item.id %>" class="nav-link mx-2"><i class="fa-solid fa-trash"></i></a>
+                                 </td>
+                              </tr>
+                           <% }) %>
+                        </tbody>
+                     </table>
+                  </div>
+                  
+               </div>
+              
+            </div>
+             <!--end view budget ----------------- -->
+
+             <!-- expense update modal  -->
+               
+               <!-- Modal -->
+               <div class="modal fade" id="expenseUpdateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                     <div class="modal-content">
+                        <form method="post" action="/budget/editExpense">
+                           <input type="hidden" id="id" name="id" />
+                           <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Expense Details</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                           </div>
+                           <div class="modal-body">
+            
+                                 <label class="mb-2 mt-3">Expense Title</label>
+                                 <input type="text" id="title" name="title" placeholder="Enter title" class="form-control" />
+            
+                                 <label class="mb-2 mt-3">Price</label>
+                                 <input type="number" id="price" name="price" placeholder="Enter Price" class="form-control" />
+            
+                                 <label class="mb-2 mt-3">Date</label>
+                                 <input type="date" id="date" name="date" class="form-control" />
+         
+                           </div>
+                           <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="submit" class="btn text-white">Save changes</button>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+               <!-- end expense update modal  -->
+
+               <!-- income update madal -->
+
+               <div class="modal fade" id="incomeUpdateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                     <div class="modal-content">
+                        <form method="post" action="/budget/editIncome">
+                           <input type="hidden" id="incomeId" name="id" />
+                           <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Income Details</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                           </div>
+                           <div class="modal-body">
+            
+                                 <label class="mb-2 mt-3">Income</label>
+                                 <input type="number" id="income" name="income" placeholder="Enter Income" class="form-control" />
+            
+                                 <label class="mb-2 mt-3">Source</label>
+                                 <input type="text" id="source" name="source" placeholder="Enter Income Source" class="form-control" />
+            
+                                 <label class="mb-2 mt-3">Date</label>
+                                 <input type="date" id="incomeDate" name="date" class="form-control" />
+         
+                           </div>
+                           <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="submit" class="btn text-white">Save changes</button>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+
+               <!-- end income update madal -->
+
+
+        </div>
+   </main>
+   
+   <%- include('../layouts/footer') %>
+   
+   <script>
+      function updateExpense(item){
+         const expenseData = JSON.parse(item);
+         document.getElementById("id").value = expenseData._id;
+         document.getElementById("title").value = expenseData.title;
+         document.getElementById("price").value = expenseData.price;
+         document.getElementById('date').value = expenseData.date;
+      }
+
+      function updateIncome(item){
+         const incomeData = JSON.parse(item);
+         document.getElementById("incomeId").value = incomeData._id;
+         document.getElementById("income").value = incomeData.income;
+         document.getElementById("source").value = incomeData.source;
+         document.getElementById('incomeDate').value = incomeData.date;
+      }
+   </script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+   <!-- income chart  -->
+   <script>
+
+      // expense Chart 
+
+      const incomeCrt = document.getElementById('incomeChart');
+      let incomeChart;
+      
+      const incomeLable = JSON.parse('<%- JSON.stringify(incomeLable) %>');
+      const incomeValue = JSON.parse('<%- JSON.stringify(incomeValue) %>');
+
+      function setIncomeChartType(chartType){
+         incomeChart.destroy();
+         setNewIncomeChart(chartType);
+      }
+    
+      setNewIncomeChart('pie')
+      function setNewIncomeChart(chartType){
+         incomeChart =  new Chart(incomeCrt, {
+            type: chartType,
+            data: {
+               labels: incomeLable,
+               datasets: [{
+                  label: '# of Income',
+                  data: incomeValue,
+                  borderWidth: 1
+               }]
+            },
+            options: {
+               scales: {
+                  y: {
+                  beginAtZero: true
+                  }
+               }
+            }
+            });
+      }
+
+     
+    </script>
+
+
+   <!-- // expense Chart  -->
+   <script>
+
+
+      const ctx = document.getElementById('myChart');
+      let myChart;
+      
+      const lableNames = JSON.parse('<%- JSON.stringify(lableNames) %>');
+      const priceValue = JSON.parse('<%- JSON.stringify(priceValue) %>');
+
+      function setChartType(chartType){
+         myChart.destroy();
+         setNewChart(chartType);
+      }
+    
+      setNewChart('pie')
+      function setNewChart(chartType){
+         myChart =  new Chart(ctx, {
+            type: chartType,
+            data: {
+               labels: lableNames,
+               datasets: [{
+                  label: '# of price',
+                  data: priceValue,
+                  borderWidth: 1
+               }]
+            },
+            options: {
+               scales: {
+                  y: {
+                  beginAtZero: true
+                  }
+               }
+            }
+            });
+      }
+
+     
+    </script>
+    
+

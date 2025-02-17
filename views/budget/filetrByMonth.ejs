@@ -1,0 +1,13 @@
+<%- include('../layouts/header') %>
+    
+<main>
+    <div>
+        <% const monthsNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];%>
+        <%= year %>
+        <% months.map((item)=>{ %>
+            <a href="/budget/chedMonthRecord/<%= item %>/<%= year %>"><%= monthsNames[item] %></a>
+        <% }) %>
+    </div>
+</main>
+
+<%- include('../layouts/footer') %>

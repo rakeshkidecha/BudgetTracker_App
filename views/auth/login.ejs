@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker SignUp</title>
+    <!-- boostrap css -->
+     <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <!-- main css -->
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body class="d-flex w-100 align-items-center justify-content-center" style="height: 100vh;">
+    <div class="col-4 mx-auto">
+        <div class="text-center mb-4">
+            <h3>Welcome Back</h3>
+            <p>Hello there, sign in to continue!</p>
+        </div>
+        <form method="post" action="/loginUser">
+
+            <label class="text-body-secondary mb-2 " for="email">Email:</label>
+            <input type="text" name="email" id="email" class="form-control" placeholder="Enter Your Email"/>
+            
+            <label class="text-body-secondary mb-2 mt-3 mb-1" for="password">Password:</label>
+            <input type="text" name="password" id="password" class="form-control" placeholder="Enter Password"/>
+
+
+            <a href="/checkEmail" class="nav-link text-primary mt-3">forget Password</a>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">LogIn</button>
+            </div>
+        </form>
+
+        <p class="text-body-tertiary" style="font-size: 14px;">Don't have an account? <a href="/signUp" class="nav-link d-inline-block text-primary mt-3">Sign up</a></p>
+    </div>
+
+
+    <script src="/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+</body>
+</html>
