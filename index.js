@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const port = 8021;
 const db = require('./config/db');
+const env = require('dotenv').config();
 
 const app = express();
 
@@ -18,4 +18,4 @@ app.use('/uploads',express.static(path.join(__dirname,'uploads')));
 app.use('/',require('./routes/authRoutes'));
 
 
-app.listen(port,err=>console.log(err?err:"Server runing in http://localhost:"+port));
+app.listen(process.env.PORT,err=>console.log(err?err:"Server runing in http://localhost:"+process.env.PORT));
